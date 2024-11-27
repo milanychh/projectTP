@@ -10,15 +10,23 @@ import sqlalchemy as sa
 
 from project.core.config import settings
 
-
-# revision identifiers, used by Alembic.
 revision = '9d09e1cb9b76'
 down_revision = None
 branch_labels = None
 depends_on = None
 
-
 def upgrade():
+    op.create_table(
+        'Clients',
+        sa.Column('client_id', sa.Integer(), nullable=False),
+        sa.Column('full_name', sa.String().with_variant(sa.String(length=100), 'postgresql'), nullable=False),
+        sa.Column('phone_number', sa.String().with_variant(sa.String(length=15), 'postgresql'), nullable=True),
+        sa.Column('email', sa.String().with_variant(sa.String(length=100), 'postgresql'), nullable=True),
+        sa.PrimaryKeyConstraint('client_id'),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String().with_variant(sa.String(length=255), 'postgresql'), nullable=False),
@@ -33,4 +41,5 @@ def upgrade():
 
 
 def downgrade():
+    op.drop_table('Clients', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('users', schema=settings.POSTGRES_SCHEMA)
