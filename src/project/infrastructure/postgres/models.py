@@ -14,5 +14,10 @@ class User(Base):
     phone_number: Mapped[str] = mapped_column(nullable=True)
 
 
-class Client:
-    pass
+class Client(Base):
+    __tablename__ = "clients"
+
+    client_id: Mapped[int] = mapped_column(primary_key=True)
+    full_name: Mapped[str] = mapped_column(nullable=False)
+    phone_number: Mapped[str] = mapped_column(nullable=True)
+    email: Mapped[str] = mapped_column(nullable=True)
