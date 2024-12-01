@@ -26,6 +26,43 @@ def upgrade():
         schema=settings.POSTGRES_SCHEMA
     )
 
+    op.create_table(
+        'Products',
+        sa.Column('product_id', sa.Integer(), nullable=False),
+        sa.Column('product_name', sa.String(100), nullable=False),
+        sa.Column('expiry_date', sa.Date(), nullable=True),
+        sa.PrimaryKeyConstraint('product_id'),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Suppliers',
+        sa.Column('supplier_id', sa.Integer(), primary_key=True),
+        sa.Column('supplier_name', sa.String(100), nullable=False),
+        sa.Column('contact_info', sa.String(150), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Deliveries',
+        sa.Column('delivery_id', sa.Integer(), primary_key=True),
+        sa.Column('supplier_id', sa.Integer(), sa.ForeignKey('suppliers.supplier_id', ondelete='CASCADE'),
+                  nullable=False),
+        sa.Column('delivery_date', sa.Date(), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Delivery_items',
+        sa.Column('item_id', sa.Integer(), nullable=False),
+        sa.Column('delivery_id', sa.Integer(), sa.ForeignKey('deliveries.delivery_id', ondelete='CASCADE'),
+                  nullable=False),
+        sa.Column('product_id', sa.Integer(), sa.ForeignKey('products.product_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('quantity', sa.Integer(), nullable=False),
+        sa.Column('unit_price', sa.Numeric(10, 2), nullable=False),
+        sa.PrimaryKeyConstraint('item_id'),
+        schema=settings.POSTGRES_SCHEMA
+    )
 
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -39,7 +76,10 @@ def upgrade():
     schema=settings.POSTGRES_SCHEMA
     )
 
-
 def downgrade():
     op.drop_table('Clients', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Products', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Suppliers', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Deliveries', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Delivery_items', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('users', schema=settings.POSTGRES_SCHEMA)
