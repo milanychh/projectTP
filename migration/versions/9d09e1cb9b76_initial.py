@@ -64,6 +64,15 @@ def upgrade():
         schema=settings.POSTGRES_SCHEMA
     )
 
+    op.create_table(
+        'Recipes',
+        sa.Column('recipe_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('dish_id', sa.Integer(), sa.ForeignKey('Dishes.dish_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('product_id', sa.Integer(), sa.ForeignKey('Products.product_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('quantity', sa.Numeric(10, 2), nullable=False),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String().with_variant(sa.String(length=255), 'postgresql'), nullable=False),
@@ -76,10 +85,89 @@ def upgrade():
     schema=settings.POSTGRES_SCHEMA
     )
 
+    op.create_table(
+        'Dishes',
+        sa.Column('dish_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('dish_name', sa.String(100), nullable=False),
+        sa.Column('description', sa.Text(), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Menu',
+        sa.Column('menu_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('dish_id', sa.Integer(), sa.ForeignKey('dishes.dish_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('recipe_id', sa.Integer(), sa.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('dish_name', sa.String(100), nullable=False),
+        sa.Column('description', sa.Text(), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'DishIngredients',
+        sa.Column('record_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('recipe_id', sa.Integer(), sa.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('product_id', sa.Integer(), sa.ForeignKey('products.product_id', ondelete='CASCADE'), nullable=False),
+        sa.Column('quantity', sa.Numeric(10, 2), nullable=False),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'TableReservations',
+        sa.Column('reservation_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('table_number', sa.Integer(), nullable=False),
+        sa.Column('reservation_time', sa.TIMESTAMP(), nullable=False),
+        sa.Column('client_id', sa.Integer(), sa.ForeignKey('clients.client_id', ondelete='CASCADE'), nullable=False),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'DiscountCards',
+        sa.Column('discount_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('discount_percentage', sa.Numeric(5, 2), nullable=False),
+        sa.Column('discount_conditions', sa.Text(), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Orders',
+        sa.Column('order_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('order_datetime', sa.TIMESTAMP(), nullable=False),
+        sa.Column('client_id', sa.Integer(), sa.ForeignKey('clients.client_id', ondelete='CASCADE'), nullable=True),
+        sa.Column('employee_id', sa.Integer(), sa.ForeignKey('employees.employee_id', ondelete='SET NULL'),
+                  nullable=True),
+        sa.Column('reservation_id', sa.Integer(),
+                  sa.ForeignKey('table_reservations.reservation_id', ondelete='SET NULL'), nullable=True),
+        sa.Column('discount_id', sa.Integer(), sa.ForeignKey('discount_cards.discount_id', ondelete='SET NULL'),
+                  nullable=True),
+        sa.Column('product_id', sa.Integer(), sa.ForeignKey('products.product_id', ondelete='SET NULL'), nullable=True),
+        sa.Column('dish_id', sa.Integer(), sa.ForeignKey('dishes.dish_id', ondelete='SET NULL'), nullable=True),
+        sa.Column('order_status', sa.String(50), nullable=True),
+        sa.Column('total_price', sa.Numeric(10, 2), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
+    op.create_table(
+        'Employees',
+        sa.Column('employee_id', sa.Integer(), sa.Identity(start=1), primary_key=True),
+        sa.Column('full_name', sa.String(100), nullable=False),
+        sa.Column('position', sa.String(100), nullable=True),
+        sa.Column('hire_date', sa.Date(), nullable=True),
+        schema=settings.POSTGRES_SCHEMA
+    )
+
 def downgrade():
     op.drop_table('Clients', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('Products', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('Suppliers', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('Deliveries', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('Delivery_items', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Recipes', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Dishes', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Menu', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('DishIngredients', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('TableReservations', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('DiscountCards', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Orders', schema=settings.POSTGRES_SCHEMA)
+    op.drop_table('Employees', schema=settings.POSTGRES_SCHEMA)
     op.drop_table('users', schema=settings.POSTGRES_SCHEMA)
