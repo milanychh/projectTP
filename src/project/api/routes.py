@@ -50,7 +50,7 @@ async def check_health() -> HealthCheckSchema:
         dishingredient_db_is_ok = await dishingredient_repo.check_connection(session=session)
         tablereservation_db_is_ok = await tablereservation_repo.check_connection(session=session)
         discountcard_db_is_ok = await discountcard_repo.check_connection(session=session)
-        order_db_is_ok = await order_repo.check_connection(session=session)
+        orders_db_is_ok = await order_repo.check_connection(session=session)
         employee_db_is_ok = await employee_repo.check_connection(session=session)
 
     return HealthCheckSchema(
@@ -66,7 +66,7 @@ async def check_health() -> HealthCheckSchema:
         dishingredient_db_is_ok=dishingredient_db_is_ok,
         tablereservation_db_is_ok=tablereservation_db_is_ok,
         discountcard_db_is_ok=discountcard_db_is_ok,
-        order_db_is_ok=order_db_is_ok,
+        orders_db_is_ok=orders_db_is_ok,
         employee_db_is_ok=employee_db_is_ok
     )
 
@@ -719,7 +719,7 @@ async def get_all_reservations() -> list[TableReservationSchema]:
 async def get_reservation_by_id(reservation_id: int) -> TableReservationSchema:
     try:
         async with database.session() as session:
-            reservation = await tablereservation_repo.get_reservation_by_id(session=session, reservation_id=reservation_id)
+            reservation = await tablereservation_repo.get_table_reservation_by_id(session=session, reservation_id=reservation_id)
     except TableReservationNotFound as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=error.message)
     return reservation

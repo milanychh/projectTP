@@ -48,7 +48,6 @@ class ProductAlreadyExists(BaseException):
         self.message = self._ERROR_MESSAGE_TEMPLATE.format(name=name)
         super().__init__(self.message)
 
-
 class SupplierNotFound(BaseException):
     _ERROR_MESSAGE_TEMPLATE: Final[str] = "Поставщик с id {id} не найден"
     message: str
