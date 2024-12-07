@@ -39,7 +39,7 @@ class ClientRepository:
     ) -> ClientSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == client_id)
+            .where(self._collection.client_id == client_id)
         )
 
         client = await session.scalar(query)
@@ -76,7 +76,7 @@ class ClientRepository:
     ) -> ClientSchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == client_id)
+            .where(self._collection.client_id == client_id)
             .values(client.model_dump())
             .returning(self._collection)
         )
@@ -93,7 +93,7 @@ class ClientRepository:
         session: AsyncSession,
         client_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == client_id)
+        query = delete(self._collection).where(self._collection.client_id == client_id)
 
         result = await session.execute(query)
 

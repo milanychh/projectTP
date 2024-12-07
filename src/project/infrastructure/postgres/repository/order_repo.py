@@ -38,7 +38,7 @@ class OrderRepository:
     ) -> OrderSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == order_id)
+            .where(self._collection.order_id == order_id)
         )
 
         order = await session.scalar(query)
@@ -92,7 +92,7 @@ class OrderRepository:
         session: AsyncSession,
         order_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == order_id)
+        query = delete(self._collection).where(self._collection.order_id == order_id)
 
         result = await session.execute(query)
 

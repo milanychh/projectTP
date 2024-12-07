@@ -38,7 +38,7 @@ class DiscountCardRepository:
     ) -> DiscountCardSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == discount_card_id)
+            .where(self._collection.discount_id == discount_card_id)
         )
 
         discount_card = await session.scalar(query)
@@ -75,7 +75,7 @@ class DiscountCardRepository:
     ) -> DiscountCardSchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == discount_card_id)
+            .where(self._collection.discount_id == discount_card_id)
             .values(discount_card.model_dump())
             .returning(self._collection)
         )
@@ -92,7 +92,7 @@ class DiscountCardRepository:
         session: AsyncSession,
         discount_card_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == discount_card_id)
+        query = delete(self._collection).where(self._collection.discount_id == discount_card_id)
 
         result = await session.execute(query)
 

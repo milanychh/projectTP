@@ -29,7 +29,7 @@ class DeliveryRepository:
     ) -> DeliverySchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == delivery_id)
+            .where(self._collection.delivery_id == delivery_id)
         )
 
         delivery = await session.scalar(query)
@@ -66,7 +66,7 @@ class DeliveryRepository:
     ) -> DeliverySchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == delivery_id)
+            .where(self._collection.delivery_id == delivery_id)
             .values(delivery.model_dump())
             .returning(self._collection)
         )
@@ -83,7 +83,7 @@ class DeliveryRepository:
         session: AsyncSession,
         delivery_id: int,
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == delivery_id)
+        query = delete(self._collection).where(self._collection.delivery_id == delivery_id)
         result = await session.execute(query)
 
         if not result.rowcount:

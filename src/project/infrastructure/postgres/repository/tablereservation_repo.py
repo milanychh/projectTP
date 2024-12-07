@@ -37,7 +37,7 @@ class TableReservationRepository:
     ) -> TableReservationSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == reservation_id)
+            .where(self._collection.reservation_id == reservation_id)
         )
 
         reservation = await session.scalar(query)
@@ -74,7 +74,7 @@ class TableReservationRepository:
     ) -> TableReservationSchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == reservation_id)
+            .where(self._collection.reservation_id == reservation_id)
             .values(reservation.model_dump())
             .returning(self._collection)
         )
@@ -91,7 +91,7 @@ class TableReservationRepository:
         session: AsyncSession,
         reservation_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == reservation_id)
+        query = delete(self._collection).where(self._collection.reservation_id == reservation_id)
 
         result = await session.execute(query)
 

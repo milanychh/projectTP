@@ -38,7 +38,7 @@ class MenuRepository:
     ) -> MenuSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == menu_item_id)
+            .where(self._collection.menu_id == menu_item_id)
         )
 
         menu_item = await session.scalar(query)
@@ -75,7 +75,7 @@ class MenuRepository:
     ) -> MenuSchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == menu_item_id)
+            .where(self._collection.menu_id == menu_item_id)
             .values(menu_item.model_dump())
             .returning(self._collection)
         )
@@ -92,7 +92,7 @@ class MenuRepository:
             session: AsyncSession,
             menu_item_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == menu_item_id)
+        query = delete(self._collection).where(self._collection.menu_id == menu_item_id)
 
         result = await session.execute(query)
 

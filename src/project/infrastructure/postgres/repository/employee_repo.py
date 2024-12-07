@@ -38,7 +38,7 @@ class EmployeeRepository:
     ) -> EmployeeSchema:
         query = (
             select(self._collection)
-            .where(self._collection.id == employee_id)
+            .where(self._collection.employee_id == employee_id)
         )
 
         employee = await session.scalar(query)
@@ -75,7 +75,7 @@ class EmployeeRepository:
     ) -> EmployeeSchema:
         query = (
             update(self._collection)
-            .where(self._collection.id == employee_id)
+            .where(self._collection.employee_id == employee_id)
             .values(employee.model_dump())
             .returning(self._collection)
         )
@@ -92,7 +92,7 @@ class EmployeeRepository:
         session: AsyncSession,
         employee_id: int
     ) -> None:
-        query = delete(self._collection).where(self._collection.id == employee_id)
+        query = delete(self._collection).where(self._collection.employee_id == employee_id)
 
         result = await session.execute(query)
 
