@@ -1,6 +1,12 @@
 from pydantic import BaseModel, Field, ConfigDict
 
-class SupplierSchema(BaseModel):
+
+class SupplierCreateUpdateSchema(BaseModel):
+    supplier_name: str
+    contact_info: str | None = Field(default=None)
+
+
+class SupplierSchema(SupplierCreateUpdateSchema):
     model_config = ConfigDict(from_attributes=True)
 
     supplier_id: int

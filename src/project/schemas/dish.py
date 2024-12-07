@@ -6,3 +6,7 @@ class DishSchema(BaseModel):
     dish_id: int
     dish_name: str
     description: str | None = Field(default=None)
+
+class DishCreateUpdateSchema(BaseModel):
+    dish_name: str
+    description: str | None = Field(default=None)
